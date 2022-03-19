@@ -7,10 +7,18 @@ from tests.BaseTest import BaseTest
 class TestAsset(BaseTest):
 
     def verify_asset_object(self, asset):
+        """ validates the data returned in the asset response """
         asset_keys = asset.keys()
-        expected_keys = ['aclass', 'altname', 'decimals', 'display_decimals']
+        expected_keys = [
+            {'key_name': 'aclass', 'value_type': str},
+            {'key_name': 'altname', 'value_type': str},
+            {'key_name': 'decimals', 'value_type': int},
+            {'key_name': 'display_decimals', 'value_type': int}
+        ]
         for key in expected_keys:
-            assert key in asset_keys, f'Expected key {key} not found.'
+            assert key['key_name'] in asset_keys, f'Expected key {key} not found.'
+            assert isinstance(asset[key['key_name']], key['value_type']), \
+                f'Expected {asset[key["key_name"]]} to be type {key["value_type"]}'
 
     @pytest.mark.smoke
     def test_single_asset(self):

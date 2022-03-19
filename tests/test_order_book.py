@@ -7,10 +7,25 @@ from tests.BaseTest import BaseTest
 class TestOrderBook(BaseTest):
 
     def verify_order_book_object(self, order_book):
+        """ validates the data returned in the order book response """
         order_book_keys = order_book.keys()
-        expected_keys = ['asks', 'bids']
+        expected_keys = [
+            {'key_name': 'asks', 'value_type': list},
+            {'key_name': 'bids', 'value_type': list},
+        ]
         for key in expected_keys:
-            assert key in order_book_keys, f'Expected key {key} not found.'
+            assert key['key_name'] in order_book_keys, f'Expected key {key} not found.'
+            assert isinstance(order_book[key['key_name']], key['value_type']), \
+                f'Expected {order_book[key["key_name"]]} to be type {key["value_type"]}'
+        for ask in order_book['asks']:
+            assert isinstance(ask[0], str), f'Expected {ask[0]} to be type str'
+            assert isinstance(ask[1], str), f'Expected {ask[1]} to be type str'
+            assert isinstance(ask[2], int), f'Expected {ask[2]} to be type int'
+        for bid in order_book['bids']:
+            assert isinstance(bid[0], str), f'Expected {bid[0]} to be type str'
+            assert isinstance(bid[1], str), f'Expected {bid[1]} to be type str'
+            assert isinstance(bid[2], int), f'Expected {bid[2]} to be type int'
+
 
     @pytest.mark.smoke
     def test_order_book(self):
