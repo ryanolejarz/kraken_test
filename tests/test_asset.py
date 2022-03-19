@@ -32,7 +32,7 @@ class TestAsset(BaseTest):
     def test_multiple_assets(self):
         """ tests when multiple assets are requested """
         assets = ['ADA', 'DOT']
-        result = self.get_asset_info(assets=assets)
+        result = self.get_multiple_asset_info(assets=assets)
         for asset in assets:
             assert asset in result.keys(), f'{asset} not found in result.'
             self.verify_asset_object(result[asset])

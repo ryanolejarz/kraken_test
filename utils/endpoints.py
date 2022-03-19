@@ -84,7 +84,7 @@ def get_tradable_asset_pairs(asset_pair: str = None, asset_pairs: list = None, e
     req_type = 'get'
     return _base_api_request(endpoint=endpoint, req_type=req_type, expect_error=expect_error)
 
-def get_ticket_info(asset_pair: str = None, asset_pairs: list = None, expect_error: bool = False) -> dict:
+def get_ticker_info(asset_pair: str = None, asset_pairs: list = None, expect_error: bool = False) -> dict:
     """ Get Ticker Info endpoint """
     endpoint = f'public/Ticker'
     if asset_pair or asset_pairs:
