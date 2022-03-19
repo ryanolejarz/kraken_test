@@ -1,10 +1,10 @@
-# kraken
+# Kraken Test
 
-Running tests against the public Kraken API
+This repository contains a test suite for testing the public [Kraken REST API](https://www.kraken.com/features/api).
 
 ## Dependencies
 
-The test suite uses the following python packages:
+The following python packages are required for running these tests:
 
 `json`
 `pytest`
