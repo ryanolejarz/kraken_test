@@ -8,10 +8,25 @@ from tests.BaseTest import BaseTest
 class TestOHLCData(BaseTest):
 
     def verify_ohlc_data_response(self, asset_pair, result):
+        """ validates the data returned in the ohlc data response """
         ohlc_data_keys = result.keys()
-        expected_keys = [asset_pair, 'last']
+        expected_keys = [
+            {'key_name': asset_pair, 'value_type': list},
+            {'key_name': 'last', 'value_type': int},
+        ]
         for key in expected_keys:
-            assert key in ohlc_data_keys, f'Expected key {key} not found.'
+            assert key['key_name'] in ohlc_data_keys, f'Expected key {key} not found.'
+            assert isinstance(result[key['key_name']], key['value_type']), \
+                f'Expected {result[key["key_name"]]} to be type {key["value_type"]}'
+        for tick_data in result[asset_pair]:
+            assert isinstance(tick_data[0], int), f'Expected {tick_data[0]} to be type int'
+            assert isinstance(tick_data[1], str), f'Expected {tick_data[1]} to be type str'
+            assert isinstance(tick_data[2], str), f'Expected {tick_data[2]} to be type str'
+            assert isinstance(tick_data[3], str), f'Expected {tick_data[3]} to be type str'
+            assert isinstance(tick_data[4], str), f'Expected {tick_data[4]} to be type str'
+            assert isinstance(tick_data[5], str), f'Expected {tick_data[5]} to be type str'
+            assert isinstance(tick_data[6], str), f'Expected {tick_data[6]} to be type str'
+            assert isinstance(tick_data[7], int), f'Expected {tick_data[7]} to be type int'
 
     @pytest.mark.smoke
     def test_ohlc_data(self):

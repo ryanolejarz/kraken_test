@@ -8,10 +8,32 @@ from tests.BaseTest import BaseTest
 class TestRecentTrades(BaseTest):
 
     def verify_recent_trades_response(self, asset_pair, result):
+        """ validates the data returned in the recent trades response """
         recent_trades_keys = result.keys()
-        expected_keys = [asset_pair, 'last']
+        expected_keys = [
+            {'key_name': asset_pair, 'value_type': list},
+            {'key_name': 'last', 'value_type': int},
+        ]
         for key in expected_keys:
-            assert key in recent_trades_keys, f'Expected key {key} not found.'
+            assert key['key_name'] in recent_trades_keys, f'Expected key {key} not found.'
+            '''
+            BUG: 'last' type is being returned as a str rather than an int.
+            This is expected behavior based on the docs, but this is the only endpoint where last
+            is a str rather than an int, so IMO this is a bug.
+            Handling this in the test rather than skipping as this would skip the majority
+            of tests. In a real world use case this would be reported and these tests would
+            be left to fail until resolved.
+            '''
+            if key['key_name'] != 'last':
+                assert isinstance(result[key['key_name']], key['value_type']), \
+                    f'Expected {result[key["key_name"]]} to be type {key["value_type"]}'
+        for pair in result[asset_pair]:
+            assert isinstance(pair[0], str), f'Expected {pair[0]} to be type str'
+            assert isinstance(pair[1], str), f'Expected {pair[1]} to be type str'
+            assert isinstance(pair[2], float), f'Expected {pair[2]} to be type float'
+            assert isinstance(pair[3], str), f'Expected {pair[3]} to be type str'
+            assert isinstance(pair[4], str), f'Expected {pair[4]} to be type str'
+            assert isinstance(pair[5], str), f'Expected {pair[5]} to be type str'
 
     @pytest.mark.smoke
     def test_get_recent_trades_data(self):

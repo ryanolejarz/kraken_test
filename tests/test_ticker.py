@@ -7,10 +7,30 @@ from tests.BaseTest import BaseTest
 class TestTicker(BaseTest):
 
     def verify_ticker_object(self, ticker):
+        """ validates the data returned in the ticker response """
         ticker_keys = ticker.keys()
-        expected_keys = ['a', 'b', 'c', 'v', 'p', 't', 'l', 'h', 'o' ]
+        expected_keys = [
+            {'key_name': 'a', 'value_type': list},
+            {'key_name': 'b', 'value_type': list},
+            {'key_name': 'c', 'value_type': list},
+            {'key_name': 'v', 'value_type': list},
+            {'key_name': 'p', 'value_type': list},
+            {'key_name': 't', 'value_type': list},
+            {'key_name': 'l', 'value_type': list},
+            {'key_name': 'h', 'value_type': list},
+            {'key_name': 'o', 'value_type': str},
+
+        ]
         for key in expected_keys:
-            assert key in ticker_keys, f'Expected key {key} not found.'
+            assert key['key_name'] in ticker_keys, f'Expected key {key} not found.'
+            assert isinstance(ticker[key['key_name']], key['value_type']), \
+                f'Expected {ticker[key["key_name"]]} to be type {key["value_type"]}'
+            if key['key_name'] in ['a', 'b', 'c', 'v', 'p', 'l', 'h']:
+                for data in ticker[key['key_name']]:
+                    assert isinstance(data, str), f'Expected {data} to be type str'
+            elif key['key_name'] == 't':
+                for data in ticker[key['key_name']]:
+                    assert isinstance(data, int), f'Expected {data} to be type int'
 
     @pytest.mark.smoke
     def test_single_ticker(self):

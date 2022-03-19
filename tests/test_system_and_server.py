@@ -7,16 +7,25 @@ from tests.BaseTest import BaseTest
 class TestSystemAndServer(BaseTest):
 
     def verify_system_status_response(self, result):
+        """ validates the data returned in the system status response """
         result_keys = result.keys()
-        expected_keys = ['status', 'timestamp']
+        expected_keys = [
+            {'key_name': 'status', 'value_type': str},
+            {'key_name': 'timestamp', 'value_type': str},
+        ]
         for key in expected_keys:
-            assert key in result_keys, f'Expected key {key} not found.'
+            assert key['key_name'] in result_keys, f'Expected key {key} not found.'
+            assert isinstance(result[key['key_name']], key['value_type']), \
+                f'Expected {result[key["key_name"]]} to be type {key["value_type"]}'
 
     def verify_server_time_response(self, result):
+        """ validates the data returned in the server time response """
         result_keys = result.keys()
         expected_keys = ['unixtime', 'rfc1123']
         for key in expected_keys:
             assert key in result_keys, f'Expected key {key} not found.'
+        assert isinstance(result['unixtime'], int), f'Expected {result["unixtime"]} to be type int'
+        assert isinstance(result['rfc1123'], str), f'Expected {result["rfc1123"]} to be type str'
 
     @pytest.mark.smoke
     def test_system_online(self):
