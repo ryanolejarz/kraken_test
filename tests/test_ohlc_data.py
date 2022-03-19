@@ -69,6 +69,6 @@ class TestOHLCData(BaseTest):
         result_2 = self.get_ohlc_data(asset_pair=asset_pair, since=last_1)
         data_2 = result_2[asset_pair]
         last_2 = result_2['last']
-        assert last_2 >= last_1
-        assert len(data_2) < len(data_1)
+        assert last_2 >= last_1, f'Expected {last_2} to be greater than or equal to {last_1}'
+        assert len(data_2) < len(data_1), f'Expected {len(data_2)} to be less than {len(data_1)}'
 
