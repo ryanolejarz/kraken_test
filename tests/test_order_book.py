@@ -83,8 +83,8 @@ class TestOrderBook(BaseTest):
 
     @pytest.mark.regression
     @pytest.mark.parametrize("asset_pair", ASSET_PAIRS)
-    def test_ask_and_bid_sort_order(self, asset_pair):
-        """ tests the asks and bids are sorted in the correct order (asks -> low to high, bids -> high to low """
+    def test_ask_greater_than_bid(self, asset_pair):
+        """ tests that the highest ask price is higher than the highest bid price """
         result = self.get_order_book(asset_pair=asset_pair)
         highest_ask = result[asset_pair]['asks'][0][0]
         highest_bid = result[asset_pair]['bids'][0][0]
@@ -93,8 +93,8 @@ class TestOrderBook(BaseTest):
 
     @pytest.mark.regression
     @pytest.mark.parametrize("asset_pair", ASSET_PAIRS)
-    def test_ask_greater_than_bid(self, asset_pair):
-        """ tests that the highest ask price is higher than the highest bid price """
+    def test_ask_and_bid_sort_order(self, asset_pair):
+        """ tests the asks and bids are sorted in the correct order (asks -> low to high, bids -> high to low """
         result = self.get_order_book(asset_pair=asset_pair)
         asks = result[asset_pair]['asks']
         bids = result[asset_pair]['bids']
