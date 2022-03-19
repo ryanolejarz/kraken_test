@@ -1,5 +1,4 @@
 import pytest
-
 from time import sleep
 
 from utils.test_data import ASSET_PAIRS
