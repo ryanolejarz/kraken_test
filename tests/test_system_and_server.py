@@ -37,6 +37,7 @@ class TestSystemAndServer(BaseTest):
 
     @pytest.mark.smoke
     def test_server_time(self):
+        """ tests the response of the server time endpoint """
         result = self.get_server_time()
         self.verify_server_time_response(result)
 
