@@ -1,5 +1,34 @@
+PPROACH: 
+
+Rather than just write tests that are covering the needs of the current scope (a few public endpoints) I wrote the suite to consider that this was just the beginning of a growing API. Because of this there are some things that seem either little over-engineered or redundant (more on that in the DESCRIPTION OF SUITE/TESTS section)
+
+
+DESCRIPTION OF SUITE/TESTS:
+
+In the root directory you'll find the following files:
+.gitignore - a standard .gitignore file using the Python template via GitHub
+config.py - values that can be adjusted to run tests in different environments or using different API versions. As the suite were expanded it would also include authentication variables (with value stored as env variables)
+NOTES.txt - you're reading it!
+pytest.ini - used to define a few pytest markers I used.
+
+There are two directories in root:
+utils/
+-test_data.py - test data. I chose to just use a subset of the crypto and fiat assets (explanation of why I chose these assets in the DIFFICULTIES ENCOUNTERED section)
+-endpoints.py - all of the Kraken public API endpoints. Each endpoint request method calls the _base_api_request method that handles the assertions and whatnot that we will do for every request. Though all of the public API endpoints were GET requests, it's ready to handle POST, PUT, etc. All endpoint request methods handle negative cases by taking in the parameter expect_error. When that is set to True, error data is asserted to exist and returned rather than the result object.
+
+tests/
+- BaseTest is the base class that all tests use. This is where things get a little redundant for now, but it is designed to support a wider test scope. Right now these are just a bunch of functions that call the API endpoints and for the most part have a 1:1 relationship with the endpoints themselves with the exception of get_all_assets and get_asset_info which each call the get_asset_info endpoint. The idea here is that BaseTest will contain reusable functions rather than having to call endpoints directly from the tests. This is also where I'd set up and delete test data at the beginning/end of testing.
+- The rest of the files are the tests themselves, one file for each endpoint (with the exception of the system status and server time endpoints which I just included in one file since there are so few tests)
+- Tests are marked as either smoke (tests that validate the endpoints are returning successfully and with the expected responses), errors (tests that hit negative cases and check errors returned) and regression (functional tests that go beyond the scope of smoke tests)
 
 
 
-Difficulties:
-* In general, a lot of standard practices aren't being followed by the API which made it difficult to test with my usual approach. All requests returning a 200 success response threw me off at first so I had to make a quick adjustment of how I was going to test negative cases.
+DIFFICULTIES ENCOUNTERED:
+
+In general, a lot of standard practices aren't being followed by the API which made it difficult to test with my usual approach. All requests returning a 200 success response threw me off at first so I had to make a quick adjustment of how I was going to test negative cases.
+
+The lack of key/value pairs in the responses made it tough to understand what information I was looking at without having to refer to documentation. For example, the response for an Assset Pair includes a "fees" object which is a list of lists with 2 values with no indication of what those values represent. 
+
+I couldn't figure out any consistent rhyme or reason with the altnames of the assets and asset pairs. It seems like at first like the object returned by the Asset endpoint would add an X to crypto and Z to fiat currencies and the altname would be the normal ticker, but then I found discrepencies even with the two most popular coins. ETH is returned with key XETH and the altname inside the obejct is ETH, but with BTC it's flipped and BTC is the key while XBT is the altname. I then noticed that some asset pairs don't add the X and Z. ETHUSD for example is returned with a key XETHZUSD while ADAUSD has a key ADAUSD. Because of this I made the choice to assume with my test suite that the test data was consistent and picked 3 coins and 2 fiats that didn't add Xs and Zs (for the most part) to lower the need for catching a bunch of cases. I chose ADA, DOT, SHIB, USD and EUR for my test suite.
+
+A few times I managed to get a 'EGeneral:Too many requests' response which I could only assume was from sending too many requests in a short period of time. Because of that there is at least one test that is marked as skip.
