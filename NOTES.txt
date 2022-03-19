@@ -1,0 +1,5 @@
+
+
+
+Difficulties:
+* In general, a lot of standard practices aren't being followed by the API which made it difficult to test with my usual approach. All requests returning a 200 success response threw me off at first so I had to make a quick adjustment of how I was going to test negative cases.
